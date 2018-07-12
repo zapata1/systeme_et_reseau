@@ -10,6 +10,7 @@ SRC = main.c
 OBJS = main.o
 LIBS = -lpthread
 LOCAL_LIBS = -L ../Board
+LOCAL_LIBS += -lboard
 
 #
 # La cible generale

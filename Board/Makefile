@@ -2,13 +2,11 @@
 # Makefile du jeu Little Big Fish
 #
 
-
 #
 # La cible generale
 #
 
 all: libboard.a
-	$(CLIB) $@ $+
 
 #
 # La cible pour la bibliothèque

@@ -6,8 +6,9 @@
 #include <pthread.h>
 #include <unistd.h>
 
-// #include "board.h"
 #include "../Board/board.h"
+#include "../Communication/libFishIPC.h"
+
 
 void *board[BOARDS_SIZE][BOARDS_SIZE];
 

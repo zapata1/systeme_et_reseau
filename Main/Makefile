@@ -9,8 +9,8 @@
 SRC = main.c
 OBJS = main.o
 LIBS = -lpthread
-LOCAL_LIBS = -L ../Board
-LOCAL_LIBS += -lboard
+LOCAL_LIBS = -L ../Board -L ../Communication
+LOCAL_LIBS += -lboard -lFishIPC
 
 #
 # La cible generale

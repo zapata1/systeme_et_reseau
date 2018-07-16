@@ -15,21 +15,22 @@
 
 
 int main(void) {
-    int msgid;
-    int numero_partie;
+    int msgid_cmd;
+    // int numero_partie;
     char message[TAILLE_MSG];
 
-    if ((msgid = msgget(CLE_MSG_CMD, 0666)) == -1) {
-        perror ("msgget");
-        exit(1);
-    }
-
-    strcpy(message, "create game\n");
-
+    msgid_cmd=fish_ipc_retrieve_queue_cmd_id();
+    msgid_ans=fish_ipc_retrieve_queue_ans_id();
+    strcpy(message, "create game");
+    printf("On envoie : %s\n",message);
     // 1 pour client 1
-    fish_ipc_send(1, message);
+    fish_ipc_send(msgid_cmd, message);
 
-    numero_partie=fish_ipc_read (msgid , message);
-    printf("%d",numero_partie);
+    while(1){
+      printf("on est dans le while\n");
+      fish_ipc_read(msgid_ans, message);
+      int numero_partie=(int)message[0];
+      printf("Retour du serveur : %d\n",numero_partie);
+    }
     return 0;
 }

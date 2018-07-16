@@ -16,7 +16,7 @@ export FLAGS = -g -DDEBUG
 # Constantes liees au projet
 #
 
-DIRS=Board Main Communication Player
+DIRS=Board Communication Main Player
 
 #
 # La cible generale

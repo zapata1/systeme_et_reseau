@@ -22,13 +22,13 @@ int fish_ipc_create_queue_cmd(void){
     return msgid_cmd;
 }
 
-int fish_ipc_create_queue_ans(void){
-  if ((msgid_ans = msgget(CLE_MSG_ANS, IPC_CREAT|IPC_EXCL|0666))==-1){
-    perror("msgget");
-    exit(1);
-  }
-    return msgid_ans;
-}
+// int fish_ipc_create_queue_ans(void){
+//   if ((msgid_ans = msgget(CLE_MSG_ANS, IPC_CREAT|IPC_EXCL|0666))==-1){
+//     perror("msgget");
+//     exit(1);
+//   }
+//     return msgid_ans;
+// }
 
 //recupère l'id de la file de message des commandes
 int fish_ipc_retrieve_queue_cmd_id(void){
@@ -39,24 +39,24 @@ int fish_ipc_retrieve_queue_cmd_id(void){
   return msgid_cmd;
 }
 
-int fish_ipc_retrieve_queue_ans_id(void){
-  if ((msgid_ans = msgget(CLE_MSG_ANS, 0666)) == -1) {
-      perror ("msgget");
-      exit(1);
-  }
-  return msgid_ans;
-}
+// int fish_ipc_retrieve_queue_ans_id(void){
+//   if ((msgid_ans = msgget(CLE_MSG_ANS, 0666)) == -1) {
+//       perror ("msgget");
+//       exit(1);
+//   }
+//   return msgid_ans;
+// }
 
 //crée une file de messages pour les réponses
 int fish_ipc_create_queue_answer(void){
-  static int cle_msg_ans=1;
+  static int cle_msg_answer=1;
 
-  if ((msgid_ans = msgget(cle_msg_ans, IPC_CREAT|IPC_EXCL|0666))==-1){
+  if ((msgid_answer = msgget(cle_msg_answer, IPC_CREAT|IPC_EXCL|0666))==-1){
     perror("msgget");
     exit(1);
   }
-  cle_msg_ans ++;
-  return msgid_ans;
+  cle_msg_answer ++;
+  return msgid_answer;
 }
 
 //détruit une file de message

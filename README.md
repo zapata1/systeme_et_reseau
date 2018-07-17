@@ -1,4 +1,10 @@
-# systeme_et_reseau
+# *systeme et réseau :*
+# Réalisation de la version informatique du jeu de plateau Little Big Fish
+
+### Commandes utiles
+`ipcrm -m` affiche toutes les files de messages
+
+`ipcrm -a` supprime toutes les files de messages
 
 ## Etape 0
 
@@ -11,5 +17,9 @@ Tester `SIGSEGV.`
 ## Etape 2
 
 Architecture posée
+
 Fonctions ok
-Test ok mais à revoir
+
+Test simplifié ok
+
+Test en situation : à faire

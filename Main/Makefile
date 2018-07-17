@@ -35,7 +35,5 @@ main.o: main.c
 # La cible de nettoyage
 #
 
-clean: $(patsubst %, _clean_%, $(DIRS))
-
-$(patsubst %,_clean_%,$(DIRS)):
-	cd $(patsubst _clean_%,%,$@) && make clean
+clean:
+	rm -f core *.o main *~

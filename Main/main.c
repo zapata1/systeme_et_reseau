@@ -21,7 +21,6 @@ void handler(int sig){
   if (sig==SIGINT){
     printf("On ne tue pas facilement un poisson!\n");
     fish_ipc_destroy_queue(msgid_cmd);
-    // fish_ipc_destroy_queue(msgid_ans);
   }
     if (sig==SIGSEGV){
     printf("Un requin vient de renverser le plateau\n");
@@ -97,18 +96,15 @@ int main(void)
   while(1){
     //lit message d'un joueur
     printf("DANS le while avant le if\n");
-    /********CHANGER*********/
-    // fish_ipc_read(msgid_cmd , message );
     msgid_client=fish_ipc_read_from_client(msgid_cmd, message);
     printf("On a recu : %s\n",message);
     printf("Le msgid_client=%d\n",msgid_client);
 
     if (!strcmp("create game",message)){
-        printf("DANS le if\n");
+        printf("Envoie du numéro de la partie\n\n");
         //renvoie le numero d'une partie
         numero_partie=incrementation_tab_parties(tab_parties);
         message[0] = (char)numero_partie;
-        /********CHANGER*********/
         fish_ipc_send(msgid_client , message);
     }
   };

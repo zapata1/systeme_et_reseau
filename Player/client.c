@@ -26,29 +26,28 @@ int main(void) {
   if (signal(SIGINT, handler) == SIG_ERR)
     printf("\ncan't catch SIGIN\n");
   /****************************************/
+
+  /****************INIT VARIABLE************************/
     int msgid_cmd;
     char message[TAILLE_MSG];
-
     msgid_cmd=fish_ipc_retrieve_queue_cmd_id();
-    /********CHANGER*********/
     msgid_answer_server=fish_ipc_create_queue_answer();
+
+    /****************************************/
+
+    /**************CREATION DU MESSAGE*************************/
     strcpy(message, "create game");
     printf("On envoie : %s\n",message);
     printf("Avec comme msgid : %d\n",msgid_answer_server);
-    // fish_ipc_send_cmd(msgid_answer_server, message);
     sprintf(message,"%s;%d",message,msgid_answer_server);
     printf("on va envoyer au final : %s\n",message);
-    // strcpy(message.texte, mess);
+    /****************************************/
+
     fish_ipc_send(msgid_cmd, message);
-    // msgsnd(msgid_cmd, message, TAILLE_MSG,0);
-    // if(msgsnd(msgid_cmd, &message, TAILLE_MSG,0)<0){
-    //   perror("msgsnd");
-    //   exit(1);
-    // };
 
     while(1){
-      printf("on est dans le while\n");
-      /********CHANGER*********/
+      printf("on attend la réponse du serveur\n");
+      /********lit sur la nouvelle file créée par le client*********/
       fish_ipc_read(msgid_answer_server, message);
       int numero_partie=(int)message[0];
       printf("Retour du serveur : on joue la partie %d\n",numero_partie);

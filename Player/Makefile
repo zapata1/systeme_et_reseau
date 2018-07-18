@@ -26,6 +26,7 @@ client: $(OBJS)
 client.o: client.c
 	$(CC) -c $(SRC) $(CFLAGS)
 
+
 #
 # La cible de debug
 #

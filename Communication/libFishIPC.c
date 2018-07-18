@@ -22,14 +22,6 @@ int fish_ipc_create_queue_cmd(void){
     return msgid_cmd;
 }
 
-// int fish_ipc_create_queue_ans(void){
-//   if ((msgid_ans = msgget(CLE_MSG_ANS, IPC_CREAT|IPC_EXCL|0666))==-1){
-//     perror("msgget");
-//     exit(1);
-//   }
-//     return msgid_ans;
-// }
-
 //recupère l'id de la file de message des commandes
 int fish_ipc_retrieve_queue_cmd_id(void){
   if ((msgid_cmd = msgget(CLE_MSG_CMD, 0666)) == -1) {
@@ -39,23 +31,15 @@ int fish_ipc_retrieve_queue_cmd_id(void){
   return msgid_cmd;
 }
 
-// int fish_ipc_retrieve_queue_ans_id(void){
-//   if ((msgid_ans = msgget(CLE_MSG_ANS, 0666)) == -1) {
-//       perror ("msgget");
-//       exit(1);
-//   }
-//   return msgid_ans;
-// }
-
 //crée une file de messages pour les réponses
 int fish_ipc_create_queue_answer(void){
-  static int cle_msg_answer=1;
+  srandom(time(NULL));
+  int cle_msg_answer=rand();;
 
   if ((msgid_answer = msgget(cle_msg_answer, IPC_CREAT|IPC_EXCL|0666))==-1){
     perror("msgget");
     exit(1);
   }
-  cle_msg_answer ++;
   return msgid_answer;
 }
 
@@ -68,12 +52,13 @@ int fish_ipc_destroy_queue(int msgid){
 //envoie un message sur la file de commandes
 //avec l'ajout en fin du message de l'id de la file crée par le client
 int fish_ipc_send_cmd(int msgid_client,char * mess){
+
     Msg_requete message;
     message.type=TYPE_MESSAGE;
 
     sprintf(message.texte,"%s;%d",mess,msgid_client);
     // strcpy(message.texte, mess);
-    if(msgsnd(msgid_cmd, &message, TAILLE_MSG,0)<0){
+    if(fish_ipc_send(msgid_cmd, message.texte)<0){
       perror("msgsnd");
       exit(1);
     };

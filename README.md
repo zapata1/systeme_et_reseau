@@ -16,10 +16,15 @@ Tester `SIGSEGV.`
 
 ## Etape 2
 
-Architecture posée
+* Architecture : posée
 
-Fonctions ok
+* Fonctions : ok
 
-Test simplifié ok
+* Test simplifié : ok
 
-Test en situation : à faire
+* Test en situation : ok
+
+## Etape 3
+
+* Lancer un thread par partie créée :
+* Renvoyer "La partie commence" :

@@ -49,8 +49,10 @@ int main(void) {
       printf("on attend la réponse du serveur\n");
       /********lit sur la nouvelle file créée par le client*********/
       fish_ipc_read(msgid_answer_server, message);
-      int numero_partie=(int)message[0];
-      printf("Retour du serveur : on joue la partie %d\n",numero_partie);
+      // int numero_partie=(int)message[0];
+      // printf("Retour du serveur : on joue la partie %d\n",numero_partie);
+      // fish_ipc_read(msgid_answer_server, message);
+      printf("On a recu : %s\n",message);
     }
     return 0;
 }

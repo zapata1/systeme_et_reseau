@@ -123,6 +123,25 @@ void launch_thread_game(int * msgid_client){
   }
 }
 
+void launch_nb_game_en_attente(int * msgid_client){
+  printf("On est dans la fonction pour récup nb parties imcompletes\n");
+
+  int i=0;
+  int cpt=0;
+  char message[TAILLE_MSG];
+  char id_partie_attente[MAX_PARTIES];
+  sprintf(message,"%s"," Parties en attente d'un joueur ");
+  for(i=0;i<MAX_PARTIES;i++){
+    if(tab_parties[i]==PARTIE_EN_ATTENTE){
+      cpt++;
+      sprintf(id_partie_attente,"%d",i);
+      strcat(message,":\t");
+      strcat(message,id_partie_attente);
+    }
+  }
+  fish_ipc_send(*msgid_client,message);
+}
+
 int main(void)
 {
   /**********************SIGNAUX*************************/
@@ -151,14 +170,18 @@ int main(void)
   /*************FILE DE MESSAGE DE RECEPTION DES CMD***************************/
   while(1){
     //lit message d'un joueur
-    printf("DANS le while avant le if\n");
     msgid_client=fish_ipc_read_from_client(msgid_cmd, message);
     printf("On a recu : %s\n",message);
     printf("Le msgid_client=%d\n",msgid_client);
 
     if (!strcmp("create game",message)){
-        launch_thread_game(&msgid_client);
+      launch_thread_game(&msgid_client);
     }
+    else if (!strcmp("get open games",message)){
+      printf("Le client veut voir la liste des parties incomplètes\n");
+      launch_nb_game_en_attente(&msgid_client);
+    }
+    printf("Fin du while\n\n");
   };
   /****************************************/
 

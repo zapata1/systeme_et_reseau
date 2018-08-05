@@ -26,5 +26,10 @@ Tester `SIGSEGV.`
 
 ## Etape 3
 
-* Lancer un thread par partie créée :
-* Renvoyer "La partie commence" :
+* Lancer un thread par partie créée : ok
+* Renvoyer "La partie commence" : ok
+
+## Etape 4
+
+* Renvoyer la liste des parties en attente d'un second joueur :
+* Affecter un jouer à une partie en attente :

@@ -117,11 +117,10 @@ int main(void) {
       }
 
       /********lit sur la nouvelle file créée par le client*********/
-      fish_ipc_read(msgid_answer_server, message);
-      // int numero_partie=(int)message[0];
-      // printf("Retour du serveur : on joue la partie %d\n",numero_partie);
-      // fish_ipc_read(msgid_answer_server, message);
-      printf("On a recu : %s\n\n\n",message);
+      if (etape==3){
+        fish_ipc_read(msgid_answer_server, message);
+        printf("On a recu : %s\n\n\n",message);
+      }
       etape=choix_action_joueur(msgid_cmd, etape);
     }
     return 0;

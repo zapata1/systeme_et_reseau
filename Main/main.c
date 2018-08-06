@@ -138,7 +138,7 @@ void launch_nb_game_en_attente(int * msgid_client){
     if(tab_parties[i]==PARTIE_EN_ATTENTE){
       cpt++;
       sprintf(id_partie_attente,"%d",i);
-      strcat(message,":\t");
+      strcat(message," : ");
       strcat(message,id_partie_attente);
     }
   }
@@ -163,6 +163,7 @@ int main(void)
   init_tab(tab_msgid_client);
 
   int msgid_client=-1;
+  int choix_client=-1;
   // int numero_partie=-1;
 
   char message[TAILLE_MSG];
@@ -178,13 +179,34 @@ int main(void)
     printf("Le msgid_client=%d\n",msgid_client);
 
     if (!strcmp("create game",message)){
-      launch_thread_game(&msgid_client);
+      choix_client=1;
     }
     else if (!strcmp("get open games",message)){
       printf("Le client veut voir la liste des parties incomplètes\n");
-      launch_nb_game_en_attente(&msgid_client);
+      choix_client=2;
     }
-    printf("Fin du while\n\n");
+    else if (!strcmp("join game",message)){
+      choix_client=3;
+    }
+
+    switch(choix_client) {
+      case 1 :
+        launch_thread_game(&msgid_client);
+        break;
+
+      case 2 :
+        launch_nb_game_en_attente(&msgid_client);
+        break;
+
+      case 3 :
+       printf("Il veut rejoindre la partie\n" );
+       break;
+
+    default :
+       printf("ERROR commande non comprise\n" );
+    }
+    printf("Que veut faire le client ?\n" );
+    // msgid_client=fish_ipc_read_from_client(msgid_cmd, message);
   };
   /****************************************/
 

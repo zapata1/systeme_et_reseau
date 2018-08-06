@@ -42,7 +42,7 @@ void handler(int sig){
     //penser a supprimer les fdm crées
     // int i=0;
     // for(i=0;i<compteur_fdm;i++){
-    //   fish_ipc_destroy_queue();
+    //   fish_ipc_destroy_queue(TAB?);
     // }
     exit(SIGINT);
   }
@@ -93,7 +93,10 @@ void * thread_game(void * arg) {
   struct info_client_partie client_partie_thread  = * (struct info_client_partie *) arg;
 
   // printf("La partie commence\n");
+  char message[TAILLE_MSG];
+  message[0]=(char)client_partie_thread.partie;
   fish_ipc_send(client_partie_thread.msgid_client,"La partie commence\n");
+  fish_ipc_send(client_partie_thread.msgid_client,message);
   pthread_exit(NULL);
 }
 

@@ -54,15 +54,15 @@ int choix_action_joueur(int msgid_cmd, int etape){
   printf("on va envoyer au final : %s\n\n",message);
   fish_ipc_send(msgid_cmd, message);
 
-  if (strcmp("create game",message)){
-    return 2;
-  }
-  else if (strcmp("get open games",message)){
-    return 1;
-  }
-  else if (strcmp("join game X",message)){
-    return 3;
-  }
+  if (strncmp("create game",message,11)==0){
+     return 1;
+   }
+   else if (strncmp("get open games",message,11)==0){
+     return 2;
+   }
+   else if (strncmp("join game X",message,11)==0){
+     return 3;
+   }
   else {
     printf("Nous n'avons pas compris votre commande\n\n");
     return choix_action_joueur(msgid_cmd, etape);
@@ -87,7 +87,35 @@ int main(void) {
     etape=choix_action_joueur(msgid_cmd, etape);
     printf("etape = %d\n",etape);
     while(1){
-      printf("on attend la réponse du serveur\n");
+      switch(etape) {
+        case 1 :
+         printf("On veut créer un jeu\n" );               //le serveur doit nous renvoyer le num de la partie
+         fish_ipc_read(msgid_answer_server, message);
+         printf("On a recu : %s\n",message);
+         fish_ipc_read(msgid_answer_server, message);
+         int numero_partie=(int)message[0];
+         printf("Retour du serveur : on joue la partie %d\n\n\n",numero_partie);
+         break;
+
+
+        case 2 :
+          printf("On veut la liste des parties\n" );      //le serveur doit nous renvoyer la liste des paties disponibles
+          fish_ipc_read(msgid_answer_server, message);    //on doit lui renvoyer la partie que l'on veut jouer
+          printf("On a recu : %s\n\n\n",message);
+          break;
+
+
+        case 3 :
+         printf("On veut rejoindre une partie\n" );       //le serveur doit nous renvoyer le num du thread
+         fish_ipc_read(msgid_answer_server, message);
+         // int numero_partie=(int)message[0];
+         // printf("Retour du serveur : on joue la partie %d\n\n\n",numero_partie);
+         break;
+
+      default :
+         printf("ERROR commande non comprise\n" );
+      }
+
       /********lit sur la nouvelle file créée par le client*********/
       fish_ipc_read(msgid_answer_server, message);
       // int numero_partie=(int)message[0];

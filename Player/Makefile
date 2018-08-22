@@ -31,8 +31,8 @@ client.o: client.c
 # La cible de debug
 #
 
-# debug: $(OBJS)
-# 	$(CC) $(FLAGS) -o client $(OBJS) $(LIBS) $(LOCAL_LIBS) $(CFLAGS)
+debug: $(OBJS)
+	$(CC) $(FLAGS) -o client $(OBJS) $(LIBS) $(LOCAL_LIBS) $(CFLAGS)
 
 
 

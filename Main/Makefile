@@ -28,8 +28,8 @@ main.o: main.c
 # La cible de debug
 #
 
-# debug: $(OBJS)
-# 	$(CC) $(FLAGS) -o main $(OBJS) $(LIBS) $(LOCAL_LIBS) $(CFLAGS)
+debug: $(OBJS)
+	$(CC) $(FLAGS) -o main $(OBJS) $(LIBS) $(LOCAL_LIBS) $(CFLAGS)
 
 #
 # La cible de nettoyage

@@ -19,8 +19,8 @@ libFishIPC.o: libFishIPC.c libFishIPC.h
 # La cible de debug
 #
 
-# debug: libFishIPC.c
-# 	$(CC) $< -o libFishIPC $(FLAGS) $(CFLAGS)
+debug: libFishIPC.c
+	$(CC) $< -o libFishIPC $(FLAGS) $(CFLAGS)
 
 #
 # La cible de nettoyage

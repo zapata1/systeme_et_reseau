@@ -9,8 +9,8 @@
 SRC=client.c
 OBJS=client.o
 LIBS = -lpthread
-LOCAL_LIBS  = -L ../Communication
-LOCAL_LIBS += -lFishIPC
+LOCAL_LIBS  = -L ../Board -L ../Communication
+LOCAL_LIBS += -lboard -lFishIPC
 CFLAGS     += -I ../Communication
 
 

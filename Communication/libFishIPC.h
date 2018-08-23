@@ -1,7 +1,7 @@
 // Damien Narbais
 
 #define CLE_MSG_CMD  (key_t)1000
-#define TAILLE_MSG  80
+#define TAILLE_MSG  128
 #define TYPE_MESSAGE 2
 
 typedef struct  {

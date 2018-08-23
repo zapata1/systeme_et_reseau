@@ -31,10 +31,10 @@ $(patsubst %,_dir_%,$(DIRS)):
 # La cible de debug
 #
 
-# debug: $(patsubst %, _debug_%, $(DIRS))
-#
-# $(patsubst %,_debug_%,$(DIRS)):
-# 	cd $(patsubst _debug_%,%,$@) && make debug
+debug: $(patsubst %, _debug_%, $(DIRS))
+
+$(patsubst %,_debug_%,$(DIRS)):
+	cd $(patsubst _debug_%,%,$@) && make debug
 
 #
 # La cible de nettoyage

@@ -48,7 +48,7 @@ int choix_action_joueur(int msgid_cmd, int etape){
     printf("*** get open games \t\t\t***\n");
   }
   if (etape==2 && etape<10){
-    printf("*** join game:X \t\t\t***\n");
+    printf("*** join game X \t\t\t***\n");
   }
   if (etape>=10){
     printf("*** get map \t\t\t\t***\n");
@@ -74,10 +74,10 @@ int choix_action_joueur(int msgid_cmd, int etape){
   else if (strncmp("get open games",message,11)==0){
     return 2;
   }
-  else if (strncmp("join game:",message,10)==0){
+  else if (strncmp("join game ",message,10)==0){
     return 3;
   }
-  else if (strncmp("get map:",message,6)==0){
+  else if (strncmp("get map",message,7)==0){
     return 10;
   }
   else {

@@ -202,17 +202,16 @@ void launch_nb_game_en_attente(int * msgid_client){
 
 void rejoindre_partie(char message[TAILLE_MSG], int * msgid_client){
 
-  char * temp1, * temp2;
+  char * temp;
   int numero_partie=-1;
   int msgid_thread=-1;
-  temp1=strtok(message,":");
-  temp2=strtok(NULL,":");
+  temp=strtok(message," ");
+  temp=strtok(NULL," ");
+  temp=strtok(NULL," ");
+  printf("Le client veur rejoindre la partie : %s\n",temp);
 
-  printf("On a : %s %s\n",temp1,temp2); //TODO pour enlever waring
-
-
-  if(temp2!=NULL){
-    numero_partie=atoi(temp2);
+  if(temp!=NULL){
+    numero_partie=atoi(temp);
     printf("Il veut rejoindre la partie %d\n",numero_partie);
 
     if((numero_partie>MAX_PARTIES)||(numero_partie<0)){
@@ -285,11 +284,7 @@ int main(void)
       printf("Le client veut voir la liste des parties incomplètes\n");
       choix_client=2;
     }
-    // else if (!strcmp("join game",message)){ //TODO verif
-    //   choix_client=3;
-    // }
-    //en supposant qu'il envoie join game:X avec X un numéro de partie
-    else if (strncmp("join game:",message,10)==0){
+    else if (strncmp("join game ",message,10)==0){
       choix_client=3;
     }
 

@@ -31,5 +31,12 @@ Tester `SIGSEGV.`
 
 ## Etape 4
 
-* Renvoyer la liste des parties en attente d'un second joueur :
-* Affecter un jouer à une partie en attente :
+* Renvoyer la liste des parties en attente d'un second joueur : ok
+* Affecter un jouer à une partie en attente : ok
+
+## Etape 5
+
+* Créer une bibliothèque réseau pour créer un serveur web :
+* Elle devra permettre de :
+  * choisir une partie en cours
+  * visualiser le plateau correspondant avec MAJ automatique

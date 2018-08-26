@@ -17,11 +17,8 @@ Tester `SIGSEGV.`
 ## Etape 2
 
 * Architecture : posée
-
 * Fonctions : ok
-
 * Test simplifié : ok
-
 * Test en situation : ok
 
 ## Etape 3

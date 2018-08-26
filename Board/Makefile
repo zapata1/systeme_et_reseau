@@ -19,9 +19,14 @@ libboard.a: board.o
 #
 # La cible de debug
 #
+debug: libboard.a
+#
+# libboard.a: board.o
+# 	rm -f $@
+# 	$(CLIB) $@ $+ $(FLAGS)
 
-debug: board.c
-	$(CC) $< -o board $(FLAGS) $(CFLAGS)
+# debug: board.c
+# 	$(CC) $< -o board $(FLAGS) $(CFLAGS)
 
 #
 # La cible de nettoyage

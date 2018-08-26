@@ -9,6 +9,9 @@
 SRC=client.c
 OBJS=client.o
 LIBS = -lpthread
+# TODO
+# LOCAL_LIBS = -L ../Board -L ../Communication -L ../Actions
+# LOCAL_LIBS += -lboard -lFishIPC -lactions
 LOCAL_LIBS  = -L ../Board -L ../Communication
 LOCAL_LIBS += -lboard -lFishIPC
 CFLAGS     += -I ../Communication
@@ -23,8 +26,8 @@ all: client
 client: $(OBJS)
 	$(CC) -o $@ $(OBJS) $(LIBS) $(LOCAL_LIBS)
 
-client.o: client.c
-	$(CC) -c $(SRC) $(CFLAGS)
+# client.o: client.c
+# 	$(CC) -c $(SRC) $(CFLAGS)
 
 
 #
@@ -32,9 +35,10 @@ client.o: client.c
 #
 
 debug: $(OBJS)
-	$(CC) $(FLAGS) -o client $(OBJS) $(LIBS) $(LOCAL_LIBS) $(CFLAGS)
+	$(CC) -o client $(OBJS) $(LIBS) $(LOCAL_LIBS) $(CFLAGS)
 
-
+client.o: client.c
+	$(CC) -c $(SRC) $(CFLAGS) $(FLAGS)
 
 #
 # La cible de nettoyage

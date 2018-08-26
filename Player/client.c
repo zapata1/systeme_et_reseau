@@ -60,12 +60,12 @@ int choix_action_joueur(int msgid_cmd, int etape){
     i++;
   }
 
-  // #ifdef DEBUG
+  #ifdef DEBUG
   printf("On va envoyer la commande : %s\n",message);
   printf("Avec comme msgid : %d\n",msgid_answer_server);
   sprintf(message,"%s;%d",message,msgid_answer_server);
   printf("On envoie au serveur : %s\n\n",message);
-  // #endif
+  #endif
   fish_ipc_send(msgid_cmd, message);
 
   if (strncmp("create game",message,11)==0){
@@ -89,9 +89,9 @@ int choix_action_joueur(int msgid_cmd, int etape){
 
 /**************LE JOUEUR EST DANS UNE PARTIE*************************/
 void partie_en_cours(int * msgid_thread){
-    // #ifdef DEBUG
+    #ifdef DEBUG
     printf("Vous êtes bien dans une partie\n");
-    // #endif
+    #endif
     int etape=10; //TODO dépend de si créé ou rejoint ?
     char message[TAILLE_MSG];
     //dire si c'est joueur 1 ou 2
@@ -103,7 +103,7 @@ void partie_en_cours(int * msgid_thread){
         case 10 :
          printf("Vous voulez voir le plateau de jeu\n" );   //le serveur doit nous renvoyer le plateau de jeu
          fish_ipc_read(msgid_answer_server, message);
-         // printBoard((void *)message);
+         printf("On a recu : \n\n%s\n",message);
          break;
 
          case 11 :
@@ -115,7 +115,6 @@ void partie_en_cours(int * msgid_thread){
       default :
          printf("ERROR commande non comprise\n" );
       }
-      etape=choix_action_joueur(msgid_cmd, etape);
     }
 }
 /********************************************************************/
@@ -136,24 +135,24 @@ int main(void) {
     /****************************************************/
 
     etape=choix_action_joueur(msgid_cmd, etape);
-    // #ifdef DEBUG
+    #ifdef DEBUG
     printf("Etape = %d\n",etape);
-    // #endif
+    #endif
     while(1){
       switch(etape) {
         case 1 :
          printf("Vous voulez créer un jeu\n" );       //le serveur doit nous renvoyer le num de la partieet l'id de la fdm du thread
          fish_ipc_read(msgid_answer_server, message); //1er message d'information
-         // #ifdef DEBUG
+         #ifdef DEBUG
          printf("On a recu : %s\n",message);
-         // #endif
+         #endif
          fish_ipc_read(msgid_answer_server, message); //recuperation du numéro de la partie
          int numero_partie=(int)message[0];
          printf("Retour du serveur : on joue la partie %d\n",numero_partie);
          fish_ipc_read(msgid_answer_server, message); //2eme message d'information pour la fdm du thread
-         // #ifdef DEBUG
+         #ifdef DEBUG
          printf("On a recu : %s\n",message);
-         // #endif
+         #endif
          fish_ipc_read(msgid_answer_server, message); //recuperation de m'id de la fdm de la partie
          msgid_thread=atoi(message);
          printf("Le numéro du thread est : %d\n\n\n",msgid_thread);
@@ -169,9 +168,9 @@ int main(void) {
         case 3 :
          printf("Vous voulez rejoindre une partie\n" );   //le serveur doit nous renvoyer le num du thread
          fish_ipc_read(msgid_answer_server, message); //1er message d'information
-         // #ifdef DEBUG
+         #ifdef DEBUG
          printf("On a recu : %s\n",message);
-         // #endif
+         #endif
          fish_ipc_read(msgid_answer_server, message); //2eme message d'information pour la fdm du thread
          msgid_thread=atoi(message);
          printf("Le numéro du thread est : %d\n\n\n",msgid_thread);

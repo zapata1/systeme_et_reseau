@@ -15,7 +15,7 @@ ________________________________
 
 ### Etape 0
 
-Il faut encore faire le  `make debug`
+* Faire les Makefiles : ok
 
 ### Etape 1
 
@@ -68,13 +68,21 @@ Ces derniers, avec les files de messages, sont représentés par des "boites" su
 
 ### Le schéma global
 
-![Schéma 1](/images/Schema_partie_1.png)
+| ![Schéma 1](/Images/Schema_partie_1.png) |
+|:--:|
+| *Etape 1 : Le premier client se connecte au serveur et veut créer une partie.* |
 
-![Schéma 2](/images/Schema_partie_2.png)
+| ![Schéma 2](/Images/Schema_partie_2.png) |
+|:--:|
+| *Etape 2 : Le serveur lance le thread qui va gérer la nouvelle partie. Le client 1 "se connecte" grâce à la file de message du thread* |
 
-![Schéma 3](/images/Schema_partie_3.png)
+| ![Schéma 3](/Images/Schema_partie_3.png) |
+|:--:|
+| *Etape 3 : Le client 2 rejoint la partie. * |
 
-![Schéma Finale](/images/Schema_globale.png)
+| ![Schéma Final](/Images/Schema_globale.png) |
+|:--:|
+| *Schéma Global (avec le serveur)* |
 
 ### Le principe (voir schéma)
 

@@ -51,4 +51,7 @@ void initBoard(void *board[BOARDS_SIZE][BOARDS_SIZE]);
 /* Print the board */
 void printBoard(void *board[BOARDS_SIZE][BOARDS_SIZE]);
 
+/* Cast le board dans un *char */
+void board_to_string(void * board[BOARDS_SIZE][BOARDS_SIZE], char * board_str);
+
 #endif

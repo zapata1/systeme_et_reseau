@@ -3,36 +3,41 @@
 # pour générer la bibliotheque libFishIPC
 #
 
+SRC = libFishIPC.c
+SRCH = libFishIPC.h
+OBJS = libFishIPC.o
+OBJS_DBG = libFishIPC_debug.o
+LIB_DBG = libFishIPC_debug.a
+LIB = libFishIPC.a
+
 #
 # La cible generale
 #
 
-all: libFishIPC.a
+all: $(LIB)
 
-# libFishIPC.a: libFishIPC.o
-# 	rm -f $@
-# 	$(CLIB) $@ $+
-#
-# libFishIPC.o: libFishIPC.c libFishIPC.h
+$(LIB): $(OBJS)
+	rm -f $@
+	$(CLIB) $@ $+
+
+$(OBJS): $(SRC) $(SRCH)
 
 #
 # La cible de debug
 #
 
-# debug: libFishIPC.c
-# 	$(CC) $< -o libFishIPC $(FLAGS) $(CFLAGS)
+debug: $(LIB_DBG)
 
-debug: libFishIPC.a
+$(LIB_DBG): $(OBJS_DBG)
+	rm -f $(LIB)
+	$(CLIB) $(LIB) $+
 
-libFishIPC.a: libFishIPC.o
-	rm -f $@
-	$(CLIB) $@ $+
-
-libFishIPC.o: libFishIPC.c libFishIPC.h
-	$(CC) -c $^ $(CFLAGS) $(FLAGS)
+$(OBJS_DBG): $(SRC) $(SRCH)
+	$(CC) -c $< -o $@ $(CFLAGS) $(FLAGS)
 
 #
 # La cible de nettoyage
 #
+
 clean:
-	rm -f core *.o libFishIPC.a *~
+	rm -f core *.o $(LIB) *~

@@ -10,7 +10,7 @@
 
 #include "../Board/board.h"
 #include "../Communication/libFishIPC.h"
-#include "../Actions/actions.h"
+#include "../Actions/libActions.h"
 
 #define MAX_JOUEURS 4
 #define MAX_PARTIES 2

@@ -68,7 +68,13 @@ Ces derniers, avec les files de messages, sont représentés par des "boites" su
 
 ### Le schéma global
 
-*A rajouter*
+![Schéma 1](/images/Schema_partie_1.png)
+
+![Schéma 2](/images/Schema_partie_2.png)
+
+![Schéma 3](/images/Schema_partie_3.png)
+
+![Schéma Finale](/images/Schema_globale.png)
 
 ### Le principe (voir schéma)
 

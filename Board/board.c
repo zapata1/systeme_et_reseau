@@ -2,6 +2,7 @@
 #include <stdlib.h> /* random */
 #include <time.h>	/* time */
 #include <stdint.h>
+#include <string.h>
 
 #include "board.h"
 
@@ -30,8 +31,7 @@ uint8_t board3[BOARD_SIZE][BOARD_SIZE] = {
 
 
 
-void printCase(uint8_t value)
-{
+void printCase(uint8_t value){
 	switch(value)
 	{
 		case EMPTY : printf("|E|");
@@ -53,8 +53,7 @@ void printCase(uint8_t value)
 	}
 }
 
-void sendCase(uint8_t value,char * board)
-{
+void sendCase(uint8_t value,char * board){
   switch(value)
     {
     case EMPTY : strcat(board,"|E|");
@@ -77,8 +76,7 @@ void sendCase(uint8_t value,char * board)
 
 }
 
-void board_to_string(void * board[BOARDS_SIZE][BOARDS_SIZE], char * board_str)
-{
+void board_to_string(void * board[BOARDS_SIZE][BOARDS_SIZE], char * board_str){
   uint8_t i;
   uint8_t j;
 
@@ -124,8 +122,7 @@ void board_to_string(void * board[BOARDS_SIZE][BOARDS_SIZE], char * board_str)
 
 }
 
-void printBoard(void *board[BOARDS_SIZE][BOARDS_SIZE])
-{
+void printBoard(void *board[BOARDS_SIZE][BOARDS_SIZE]){
 	uint8_t i;
 	uint8_t j;
 
@@ -162,8 +159,7 @@ void printBoard(void *board[BOARDS_SIZE][BOARDS_SIZE])
 	}
 }
 
-void initBoard(void *board[BOARDS_SIZE][BOARDS_SIZE])
-{
+void initBoard(void *board[BOARDS_SIZE][BOARDS_SIZE]){
 	uint8_t i;
 	uint8_t r[4];
 

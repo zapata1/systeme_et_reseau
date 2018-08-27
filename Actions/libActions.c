@@ -9,7 +9,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "actions.h"
+#include "libActions.h"
 #include "../Board/board.h"
 #include "../Communication/libFishIPC.h"
 
@@ -21,22 +21,24 @@
 //Le joueur 2 placera donc ses poissons en bas du PLATEAU
 //prend le plateau initial en parametre
 
-char * emplacement_libre(int * joueur, void * board_thread[BOARDS_SIZE][BOARDS_SIZE]){
-  if(*joueur==1){
-    //Trouver emplacement libre pour J1
-  }
-  else if (*joueur==2){
-    //Trouver emplacement libre pour J2
-
-  }
-  else {
-    printf("ERROR : il ne peut y avoir que 2 joueurs");
-  }
-}
+// char * emplacement_libre(int * joueur, void * board_thread[BOARDS_SIZE][BOARDS_SIZE]){
+//   if(*joueur==1){
+//     //Trouver emplacement libre pour J1
+//   }
+//   else if (*joueur==2){
+//     //Trouver emplacement libre pour J2
+//
+//   }
+//   else {
+//     printf("ERROR : il ne peut y avoir que 2 joueurs");
+//   }
+//   return ;
+// }
 
 void placement_poissons_init(int * numero_joueur, int * msgid_joueur, void * board_thread[BOARDS_SIZE][BOARDS_SIZE]){
   int nb_placement=3;
   printf("Vous pouvez placer vos poissons en :");
+  printf("Il vous en reste : %d :", nb_placement);
 
 }
 

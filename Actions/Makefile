@@ -1,43 +1,43 @@
 # Damien Narbais
 # Makefile du jeu Little Big Fish
-# pour générer la bibliotheque libFishIPC
+# pour générer la bibliotheque libActions
 #
 
-# CC = gcc
-# CLIB = ar cq
-# CFLAGS = -Wall -Werror -pedantic -g -DDEBUG
-# FLAGS = -g -DDEBUG
+SRC = libActions.c
+SRCH = libActions.h
+OBJS = libActions.o
+OBJS_DBG = libActions_debug.o
+LIB_DBG = libActions_debug.a
+LIB = libActions.a
 
 #
 # La cible generale
 #
 
-all: actions.a
+all: $(LIB)
 
-# actions.a: actions.o
-# 	rm -f $@
-# 	$(CLIB) $@ $+
-#
-# actions.o: actions.c actions.h
+$(LIB): $(OBJS)
+	rm -f $@
+	$(CLIB) $@ $+
+
+$(OBJS): $(SRC) $(SRCH)
 
 #
 # La cible de debug
 #
 
-# debug: actions.c
-# 	$(CC) $< -o actions $(FLAGS) $(CFLAGS)
+debug: $(LIB_DBG)
 
-debug: actions.a
+$(LIB_DBG): $(OBJS_DBG)
+	rm -f $(LIB)
+	$(CLIB) $(LIB) $+
 
-actions.a: actions.o
-	rm -f $@
-	$(CLIB) $@ $+
-
-actions.o: actions.c actions.h
-	$(CC) -c $^ $(CFLAGS) $(FLAGS)
+$(OBJS_DBG): $(SRC) $(SRCH)
+	$(CC) -c $< -o $@ $(CFLAGS) $(FLAGS)
 
 #
 # La cible de nettoyage
 #
+
 clean:
-	rm -f core *.o actions.a *~
+	rm -f core *.o $(LIB) *~

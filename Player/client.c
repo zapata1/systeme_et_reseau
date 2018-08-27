@@ -12,6 +12,8 @@
 
 #include "../Board/board.h"
 #include "../Communication/libFishIPC.h"
+#include "../Actions/libActions.h"
+
 
 int msgid_answer_server;
 int msgid_thread;

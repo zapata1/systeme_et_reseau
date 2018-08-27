@@ -6,42 +6,42 @@
 # Constantes pour la compilation des programmes
 #
 
-SRC=client.c
-OBJS=client.o
+EXEC = client
+SRC = client.c
+OBJS = client.o
+OBJS_DBG = main_debug.o
 LIBS = -lpthread
 # TODO
 # LOCAL_LIBS = -L ../Board -L ../Communication -L ../Actions
 # LOCAL_LIBS += -lboard -lFishIPC -lactions
-LOCAL_LIBS  = -L ../Board -L ../Communication
+LOCAL_LIBS = -L ../Board -L ../Communication
 LOCAL_LIBS += -lboard -lFishIPC
-CFLAGS     += -I ../Communication
-
 
 #
 # La cible generale
 #
 
-all: client
+all: $(EXEC)
 
-client: $(OBJS)
+$(EXEC): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(LIBS) $(LOCAL_LIBS)
 
-# client.o: client.c
-# 	$(CC) -c $(SRC) $(CFLAGS)
-
+$(OBJS): $(SRC)
+	$(CC) -c $^ $(CFLAGS)
 
 #
 # La cible de debug
 #
 
-debug: $(OBJS)
-	$(CC) -o client $(OBJS) $(LIBS) $(LOCAL_LIBS) $(CFLAGS)
+debug: $(OBJS_DBG)
+	$(CC) -o $(EXEC) $(OBJS_DBG) $(LIBS) $(LOCAL_LIBS) $(CFLAGS)
 
-client.o: client.c
-	$(CC) -c $(SRC) $(CFLAGS) $(FLAGS)
+$(OBJS_DBG): $(SRC)
+	$(CC) -c $^ -o $(OBJS_DBG) $(CFLAGS) $(FLAGS)
 
 #
 # La cible de nettoyage
 #
+
 clean:
-	rm -f core *.o client *~
+	rm -f core *.o $(EXEC) *~

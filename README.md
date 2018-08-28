@@ -78,7 +78,7 @@ Ces derniers, avec les files de messages, sont représentés par des "boites" su
 
 | ![Schéma 3](/Images/Schema_partie_3.png) |
 |:--:|
-| *Etape 3 : Le client 2 rejoint la partie. * |
+| *Etape 3 : Le client 2 rejoint la partie.* |
 
 | ![Schéma Final](/Images/Schema_globale.png) |
 |:--:|

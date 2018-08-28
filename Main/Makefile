@@ -11,11 +11,10 @@ SRC = main.c
 OBJS = main.o
 OBJS_DBG = main_debug.o
 LIBS = -lpthread
-# TODO
-# LOCAL_LIBS = -L ../Board -L ../Communication -L ../Actions
-# LOCAL_LIBS += -lboard -lFishIPC -lactions
-LOCAL_LIBS = -L ../Board -L ../Communication
-LOCAL_LIBS += -lboard -lFishIPC
+
+LOCAL_LIBS = -L ../Board -L ../Communication -L ../Actions
+LOCAL_LIBS += -lboard -lFishIPC -lActions
+
 
 #
 # La cible generale

@@ -12,7 +12,7 @@
 #include "../Communication/libFishIPC.h"
 #include "../Actions/libActions.h"
 
-#define MAX_JOUEURS 4
+#define MAX_JOUEURS 1
 #define MAX_PARTIES 2
 
 #define PARTIE_EN_ATTENTE 1
@@ -28,6 +28,7 @@ struct info_client_partie client_partie;
 /*****************GESTION DES PARTIES***********************/
 int tab_parties[MAX_PARTIES];
 int tab_thread[MAX_PARTIES];
+int tab_id_joueurs[MAX_JOUEURS];
 
 /***********************************************************/
 
@@ -44,12 +45,12 @@ void supprimer_fdm(void){
 
 void handler(int sig){
   if (sig==SIGINT){
-    printf("On ne tue pas facilement un poisson!\n");
+    printf("[Serveur]: On ne tue pas facilement un poisson!\n");
     supprimer_fdm();
     exit(SIGINT);
   }
     if (sig==SIGSEGV){
-    printf("Un requin vient de renverser le plateau\n");
+    printf("[Serveur]: Un requin vient de renverser le plateau\n");
     supprimer_fdm();
     exit(SIGSEGV);
     }
@@ -69,9 +70,9 @@ int incrementation_tab_parties(int tab_parties[MAX_PARTIES], int * msgid_client)
   }
   if(i==MAX_PARTIES){
     #ifdef DEBUG
-    printf("ERREUR : Toutes les emplacements de parties sont pris\n\n\n");
+    printf("[Serveur]: **SATURATION** : Tous les emplacements de parties sont pris\n\n\n");
     #endif
-    fish_ipc_send(*msgid_client,"ERREUR : Toutes les emplacements de parties sont pris\n");
+    fish_ipc_send(*msgid_client,"**SATURATION** : Toutes les emplacements de parties sont pris\n");
     return -1;
   }
   else {
@@ -80,6 +81,68 @@ int incrementation_tab_parties(int tab_parties[MAX_PARTIES], int * msgid_client)
   }
 }
 
+void incrementation_nb_joueurs(int * msgid_client){
+  int i = 0;
+  int existe = 0;
+  //on regarde si le joueur n'est pas déjà connecté
+  for(i=0;i<MAX_JOUEURS;i++){
+    if(tab_id_joueurs[i]==*msgid_client){
+      existe = 1;
+    }
+  }
+  //s'il n'est pas connecté, on lui attribue une place s'il en reste une
+  if(existe==0){
+    int placement = 0;
+    i=0;
+    while(i<MAX_JOUEURS && placement==0){
+      if(tab_id_joueurs[i]==0){
+        tab_id_joueurs[i]=*msgid_client;
+        placement=1;
+      }
+      i++;
+    }
+    if(placement==0){
+      printf("[Serveur]: Plus de place pour un nouveau joueur %d\n\n\n",*msgid_client);
+      fish_ipc_send(*msgid_client,"Désolé, il n y a plus de place pour un nouveau joueur\n");
+    }
+  }
+}
+
+void decrementation_nb_joueurs(int * msgid_client){
+  int i = 0;
+  int existe = 0;
+  //on regarde si le joueur est connecté
+  for(i=0;i<MAX_JOUEURS;i++){
+    if(tab_id_joueurs[i]==*msgid_client){
+      existe = 1;
+    }
+  }
+  //s'il est connecté, on libère sa place
+  if(existe==1){
+    int placement = 0;
+    i=0;
+    while(i<MAX_JOUEURS && placement==0){
+      if(tab_id_joueurs[i]==*msgid_client){
+        tab_id_joueurs[i]=0;
+        placement=1;
+      }
+      i++;
+    }
+    #ifdef DEBUG
+    for(i=0;i<MAX_JOUEURS;i++){
+      if(tab_id_joueurs[i]==*msgid_client){
+        printf("[Serveur]: Le joueur %d ne s'est pas bien déconnecté\n\n\n",*msgid_client);
+      }
+      else{
+        printf("[Serveur]: Le joueur %d s'est bien déconnecté\n\n\n",*msgid_client);
+      }
+    }
+    #endif
+  }
+  else {
+    printf("[Serveur]: Le client n'était pas enregistré\n\n\n");
+  }
+}
 
 //TODO faire la fonction
 
@@ -120,25 +183,25 @@ void * thread_game(void * arg) {
   int msgid_thread=0;
 
   #ifdef DEBUG
-  printf("On est dans le thread de la partie créée\n");
-  printf("C'est la partie : %d\n", partie);
+  printf("[Partie %d]: On est dans le thread de la partie créée\n",partie);
+  printf("[Partie %d]: C'est la partie : %d\n", partie, partie);
   #endif
   char message[TAILLE_MSG];
   message[0]=(char)partie;
   #ifdef DEBUG
-  printf("On indique au client que la partie est créée et le numéro associé à cette partie\n");
+  printf("[Partie %d]: On indique au client que la partie est créée et le numéro associé à cette partie\n",partie);
   #endif
   fish_ipc_send(msgid_client_1,"La partie est créée\n");
   fish_ipc_send(msgid_client_1,message);
 
   #ifdef DEBUG
-  printf("On lui envoie la nouvelle file de message créé pour la partie\n");
+  printf("[Partie %d]: On lui envoie la nouvelle file de message créé pour la partie\n",partie);
   #endif
   msgid_thread=fish_ipc_create_queue_answer();
   tab_thread[partie]=msgid_thread; //on stocke le numero de le file de message dans le tableau global
 
   #ifdef DEBUG
-  printf("L'id de la fdm pour le thread est : %d\n",msgid_thread);
+  printf("[Partie %d]: L'id de la fdm pour le thread est : %d\n",partie,msgid_thread);
   #endif
   fish_ipc_send(msgid_client_1,"La nouvelle file de message a le numero : \n");
   sprintf(message,"%d",msgid_thread);
@@ -158,7 +221,7 @@ void * thread_game(void * arg) {
     if( (!strcmp(message,"get map")) && (msgid_client_2==msgid_client_1) ){
       board_to_string(board_thread,message);
       fish_ipc_send(msgid_client_1,(char *)message);
-      printf("thread de la partie %d : plateau envoyé \n",partie);
+      printf("[Partie %d]: thread de la partie %d : plateau envoyé \n",partie,partie);
       bzero(message,TAILLE_MSG);
     }
   }
@@ -167,12 +230,12 @@ void * thread_game(void * arg) {
   //La partie va pouvoir commencer
 
   #ifdef DEBUG
-  printf("Les deux joueurs sont arrivés. Voici le récapitulatif : \n\n");
+  printf("[Partie %d]: Les deux joueurs sont arrivés. Voici le récapitulatif : \n\n",partie);
   printf("*************************\n");
-  printf("msgid J1 = %d\n",msgid_client_1);
-  printf("msgid J2 = %d\n",msgid_client_2);
-  printf("num fdm thread = %d\n",msgid_thread);
-  printf("partie jouée = %d\n",partie);
+  printf("[Partie %d]: msgid J1 = %d\n",partie,msgid_client_1);
+  printf("[Partie %d]: msgid J2 = %d\n",partie,msgid_client_2);
+  printf("[Partie %d]: num fdm thread = %d\n",partie,msgid_thread);
+  printf("[Partie %d]: partie jouée = %d\n",partie,partie);
   printf("*************************\n\n");
   #endif
 
@@ -183,12 +246,12 @@ void * thread_game(void * arg) {
 
 void launch_thread_game(int * msgid_client){
   #ifdef DEBUG
-  printf("On est dans la fonction du lancement du thread\n");
+  printf("[Serveur]: On est dans la fonction du lancement du thread\n");
   #endif
 
   int num_partie=incrementation_tab_parties(tab_parties, msgid_client);
   #ifdef DEBUG
-  printf("Numéro de la partie lancée : %d\n",num_partie);
+  printf("[Serveur]: Numéro de la partie lancée : %d\n",num_partie);
   #endif
 
   if (num_partie!=-1){
@@ -202,15 +265,15 @@ void launch_thread_game(int * msgid_client){
   else {
     //On ne peut plus créer de nouvelles parties
     #ifdef DEBUG
-    printf("Les parties sont complètes\n\n\n");
+    printf("[Serveur]: Les parties sont complètes\n\n\n");
     #endif
-    fish_ipc_send(*msgid_client,"ERREUR : Les parties sont complètes\n");
+    fish_ipc_send(*msgid_client,"[Serveur]: ERREUR : Les parties sont complètes\n");
   }
 }
 
 void launch_nb_game_en_attente(int * msgid_client){
   #ifdef DEBUG
-  printf("On est dans la fonction pour récupérer l'id des parties imcompletes\n");
+  printf("[Serveur]: On est dans la fonction pour récupérer l'id des parties imcompletes\n");
   #endif
 
   int i=0;
@@ -241,7 +304,7 @@ void rejoindre_partie(char message[TAILLE_MSG], int * msgid_client){
   temp=strtok(NULL," ");
 
   #ifdef DEBUG
-  printf("Le client veur rejoindre la partie : %s\n",temp);
+  printf("[Serveur]: Le client veur rejoindre la partie : %s\n",temp);
   #endif
 
   if(temp!=NULL){
@@ -249,14 +312,14 @@ void rejoindre_partie(char message[TAILLE_MSG], int * msgid_client){
 
     if((numero_partie>=MAX_PARTIES)||(numero_partie<0)){
       #ifdef DEBUG
-      printf("La partie demandée n'existe pas\n\n\n");
+      printf("[Serveur]: La partie demandée n'existe pas\n\n\n");
       #endif
       fish_ipc_send(*msgid_client,"ERREUR : La partie n'existe pas\n");
     }
 
     else if(tab_parties[numero_partie]!=1){
       #ifdef DEBUG
-      printf("La partie demandée est déjà complète ou inexistante\n\n\n");
+      printf("[Serveur]: La partie demandée est déjà complète ou inexistante\n\n\n");
       #endif
       fish_ipc_send(*msgid_client,"ERREUR : La partie demandée est déjà complète ou inexistante\n");
     }
@@ -265,7 +328,7 @@ void rejoindre_partie(char message[TAILLE_MSG], int * msgid_client){
       msgid_thread=tab_thread[numero_partie];
       sprintf(message,"%d",msgid_thread);
       #ifdef DEBUG
-      printf("L'id de la fdm pour le thread est : %d\n",msgid_thread);
+      printf("[Serveur]: L'id de la fdm pour le thread est : %d\n",msgid_thread);
       #endif
       fish_ipc_send(*msgid_client,"L'id de la fdm pour le thread est :\n");
       fish_ipc_send(*msgid_client,message);
@@ -292,6 +355,7 @@ int main(void){
   /*****************INITIALISATION***********************/
   init_tab(tab_parties);
   init_tab(tab_thread);
+  init_tab(tab_id_joueurs);
 
   int msgid_client=-1;
   int choix_client=-1;
@@ -302,7 +366,7 @@ int main(void){
   /******************************************************/
 
   /*************FILE DE MESSAGE DE RECEPTION DES CMD***************************/
-  printf("On peut accueillir %d joueurs sur %d parties\n\n",MAX_JOUEURS,MAX_PARTIES);
+  printf("[Serveur]: On peut accueillir %d joueurs sur %d parties\n\n",MAX_JOUEURS,MAX_PARTIES);
   while(1){
     #ifdef DEBUG
     printf("--- Que veut faire le client ? ---\n\n" );
@@ -310,45 +374,49 @@ int main(void){
     //lit message d'un joueur et récupère l'id de sa fdm
     msgid_client=fish_ipc_read_from_client(msgid_cmd, message);
     #ifdef DEBUG
-    printf("On a recu : %s\n",message);
-    printf("Le msgid_client=%d\n",msgid_client);
+    printf("[Serveur]: On a recu : %s\n",message);
+    printf("[Serveur]: Le msgid_client=%d\n",msgid_client);
     #endif
 
     if (!strcmp("create game",message)){
+      printf("[Serveur]: Le client %d veut créer une partie\n",msgid_client);
+      incrementation_nb_joueurs(&msgid_client);
       choix_client=1;
     }
     else if (!strcmp("get open games",message)){
-      printf("Le client veut voir la liste des parties incomplètes\n");
+      printf("[Serveur]: Le client %d veut voir la liste des parties incomplètes\n",msgid_client);
+      incrementation_nb_joueurs(&msgid_client);
       choix_client=2;
     }
     else if (strncmp("join game ",message,10)==0){
+      printf("[Serveur]: Le client %d veut rejoindre une partie\n",msgid_client);
+      incrementation_nb_joueurs(&msgid_client);
       choix_client=3;
+    }
+    else if (!strcmp("deconnection",message)){
+      printf("[Serveur]: Le client : %d veut se deconnecter\n",msgid_client);
+      choix_client=4;
     }
 
     switch(choix_client) {
       case 1 :
-        #ifdef DEBUG
-        printf("Il veut créer une partie\n" );
-        #endif
         launch_thread_game(&msgid_client);
         break;
 
       case 2 :
-        #ifdef DEBUG
-        printf("Il veut obtenir la liste des parties en attente\n" );
-        #endif
         launch_nb_game_en_attente(&msgid_client);
         break;
 
       case 3 :
-        #ifdef DEBUG
-        printf("Il veut rejoindre une partie\n" );
-        #endif
         rejoindre_partie(message, &msgid_client);
        break;
 
+       case 4 :
+         decrementation_nb_joueurs(&msgid_client);
+       break;
+
       default :
-        printf("ERREUR commande non comprise\n\n\n");
+        printf("[Serveur]: ERREUR commande non comprise\n\n\n");
         fish_ipc_send(msgid_client,"ERREUR commande non comprise\n");
     }
   };

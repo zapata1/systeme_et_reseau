@@ -47,8 +47,8 @@ void handler(int sig){
 }
 
 void affichage_menu(int * etape){
-  printf("***********************************************\n");
-  printf("*** Entrez la commande que vous souhaitez : ***\n");
+  printf("***************************************************\n");
+  printf("*** Entrez la commande que vous souhaitez : \t***\n");
   if (*etape!=CREATION_PARTIE && *etape<DEBUT_PARTIE){
     printf("*** create game \t\t\t\t***\n");
     printf("*** get open games \t\t\t\t***\n");
@@ -57,9 +57,9 @@ void affichage_menu(int * etape){
     printf("*** join game X \t\t\t\t***\n");
   }
   if (*etape>=DEBUT_PARTIE){
-    printf("*** get map \t\t\t\t***\n");
+    printf("*** get map \t\t\t\t\t***\n");
   }
-  printf("***********************************************\n");
+  printf("***************************************************\n");
 }
 
 int erreur_serveur(char * message){
@@ -147,6 +147,84 @@ void partie_en_cours(int * msgid_thread){
     }
 }
 
+void creation_partie(int * etape){
+  char message[TAILLE_MSG];
+
+  printf("[Client %d]: Vous voulez créer un jeu\n",msgid_client ); //le serveur doit nous renvoyer le num de la partie et l'id de la fdm du thread
+  fish_ipc_read(msgid_client, message); //1er message d'information
+  #ifdef DEBUG
+  printf("[Client %d]: On a recu : %s\n",msgid_client,message);
+  #endif
+  if(erreur_serveur(message)!=ERREUR){
+    fish_ipc_read(msgid_client, message); //recuperation du numéro de la partie
+    if(erreur_serveur(message)!=ERREUR){
+      int numero_partie=(int)message[0];
+      printf("[Client %d]: Retour du serveur : on joue la partie %d\n",msgid_client,numero_partie);
+      fish_ipc_read(msgid_client, message); //2eme message d'information pour la fdm du thread
+      #ifdef DEBUG
+      printf("[Client %d]: On a recu : %s\n",msgid_client,message);
+      #endif
+      if(erreur_serveur(message)!=ERREUR){
+        fish_ipc_read(msgid_client, message); //recuperation de l'id de la fdm de la partie
+        msgid_thread=atoi(message);
+        printf("[Client %d]: Le numéro du thread est : %d\n\n\n",msgid_client,msgid_thread);
+        partie_en_cours(&msgid_thread); //on va pouvoir jouer
+      }
+      else {
+        *etape=0;
+      }
+    }
+    else {
+      *etape=0;
+    }
+  }
+  else {
+    *etape=0;
+  }
+}
+
+void get_parties_attente(int * etape){
+  char message[TAILLE_MSG];
+
+  printf("[Client %d]: Vous voulez la liste des parties\n",msgid_client );  //le serveur doit nous renvoyer la liste des paties disponibles
+  fish_ipc_read(msgid_client, message);
+  if(erreur_serveur(message)!=ERREUR){
+    printf("[Client %d]: On a recu : %s\n\n\n",msgid_client,message);
+  }
+  else {
+    *etape=0;
+  }
+}
+
+void join_game(int * etape){
+  char message[TAILLE_MSG];
+
+  printf("[Client %d]: Vous voulez rejoindre la partie demandée\n",msgid_client );   //le serveur doit nous renvoyer le num du thread
+  fish_ipc_read(msgid_client, message); //1er message d'information
+  #ifdef DEBUG
+  printf("[Client %d]: On a recu : %s\n",msgid_client,message);
+  #endif
+  if(erreur_serveur(message)!=ERREUR){
+    fish_ipc_read(msgid_client, message); //2eme message d'information pour la fdm du thread
+    msgid_thread=atoi(message);
+    #ifdef DEBUG
+    printf("[Client %d]: Le numéro du thread est : %d\n\n\n",msgid_client,msgid_thread);
+    #endif
+
+    // il faut annoncer au thread de la gestion de la parie qu'on a bien rejoint la partie
+    sprintf(message,"Je suis le deuxieme joueur");
+    sprintf(message,";%d",msgid_client);
+    #ifdef DEBUG
+    printf("[Client %d]: On envoie au thread de la gestion de partie : %s\n\n",msgid_client,message);
+    #endif
+    fish_ipc_send(msgid_thread, message);
+    partie_en_cours(&msgid_thread); //on va pouvoir jouer
+  }
+  else {
+    *etape=0;
+  }
+}
+
 int main(void) {
   /****************** SIGNAUX **********************/
   if (signal(SIGINT, handler) == SIG_ERR)
@@ -156,7 +234,7 @@ int main(void) {
   /******************* INITIALISATION ********************/
     int msgid_cmd;
     int etape=ARRIVEE_JOUEUR;
-    char message[TAILLE_MSG];
+
     msgid_cmd=fish_ipc_retrieve_queue_cmd_id();
     msgid_client=fish_ipc_create_queue_answer();
     /****************************************************/
@@ -168,71 +246,16 @@ int main(void) {
     while(1){
       switch(etape) {
         case CREATION_PARTIE :
-         printf("[Client %d]: Vous voulez créer un jeu\n",msgid_client ); //le serveur doit nous renvoyer le num de la partie et l'id de la fdm du thread
-         fish_ipc_read(msgid_client, message); //1er message d'information
-         #ifdef DEBUG
-         printf("[Client %d]: On a recu : %s\n",msgid_client,message);
-         #endif
-         if(erreur_serveur(message)!=ERREUR){
-           fish_ipc_read(msgid_client, message); //recuperation du numéro de la partie
-           int numero_partie=(int)message[0];
-           printf("[Client %d]: Retour du serveur : on joue la partie %d\n",msgid_client,numero_partie);
-           fish_ipc_read(msgid_client, message); //2eme message d'information pour la fdm du thread
-           #ifdef DEBUG
-           printf("[Client %d]: On a recu : %s\n",msgid_client,message);
-           #endif
-           if(erreur_serveur(message)!=ERREUR){
-             fish_ipc_read(msgid_client, message); //recuperation de l'id de la fdm de la partie
-             msgid_thread=atoi(message);
-             printf("[Client %d]: Le numéro du thread est : %d\n\n\n",msgid_client,msgid_thread);
-             partie_en_cours(&msgid_thread); //on va pouvoir jouer
-           }
-           else {
-             etape=0;
-           }
-         }
-         else {
-           etape=0;
-         }
-         break;
+          creation_partie(&etape);
+          break;
 
         case GET_PARTIES_ATTENTE :
-          printf("[Client %d]: Vous voulez la liste des parties\n",msgid_client );  //le serveur doit nous renvoyer la liste des paties disponibles
-          fish_ipc_read(msgid_client, message);
-          if(erreur_serveur(message)!=ERREUR){
-            printf("[Client %d]: On a recu : %s\n\n\n",msgid_client,message);
-          }
-          else {
-            etape=0;
-          }
+          get_parties_attente(&etape);
           break;
 
         case JOIN_GAME :
-         printf("[Client %d]: Vous voulez rejoindre la partie demandée\n",msgid_client );   //le serveur doit nous renvoyer le num du thread
-         fish_ipc_read(msgid_client, message); //1er message d'information
-         #ifdef DEBUG
-         printf("[Client %d]: On a recu : %s\n",msgid_client,message);
-         #endif
-         if(erreur_serveur(message)!=ERREUR){
-           fish_ipc_read(msgid_client, message); //2eme message d'information pour la fdm du thread
-           msgid_thread=atoi(message);
-           #ifdef DEBUG
-           printf("[Client %d]: Le numéro du thread est : %d\n\n\n",msgid_client,msgid_thread);
-           #endif
-
-           // il faut annoncer au thread de la gestion de la parie qu'on a bien rejoint la partie
-           sprintf(message,"Je suis le deuxieme joueur");
-           sprintf(message,";%d",msgid_client);
-           #ifdef DEBUG
-           printf("[Client %d]: On envoie au thread de la gestion de partie : %s\n\n",msgid_client,message);
-           #endif
-           fish_ipc_send(msgid_thread, message);
-           partie_en_cours(&msgid_thread); //on va pouvoir jouer
-         }
-         else {
-           etape=0;
-         }
-         break;
+          join_game(&etape);
+          break;
 
       default :
          printf("[Client %d]: ERREUR commande non comprise\n",msgid_client );

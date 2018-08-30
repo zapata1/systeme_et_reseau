@@ -12,11 +12,13 @@
 #include "../Communication/libFishIPC.h"
 #include "../Actions/libActions.h"
 
-#define MAX_JOUEURS 1
-#define MAX_PARTIES 2
+#define MAX_JOUEURS 10
+#define MAX_PARTIES 1
 
 #define PARTIE_EN_ATTENTE 1
 #define PARTIE_COMPLETE 2
+
+#define ERREUR -1
 
 /*****************GESTION DES JOUEURS***********************/
 struct info_client_partie {
@@ -72,7 +74,7 @@ int incrementation_tab_parties(int tab_parties[MAX_PARTIES], int * msgid_client)
     #ifdef DEBUG
     printf("[Serveur]: **SATURATION** : Tous les emplacements de parties sont pris\n\n\n");
     #endif
-    fish_ipc_send(*msgid_client,"**SATURATION** : Toutes les emplacements de parties sont pris\n");
+    fish_ipc_send(*msgid_client,"ERREUR : **SATURATION** : Toutes les emplacements de parties sont pris\n");
     return -1;
   }
   else {
@@ -81,7 +83,7 @@ int incrementation_tab_parties(int tab_parties[MAX_PARTIES], int * msgid_client)
   }
 }
 
-void incrementation_nb_joueurs(int * msgid_client){
+int incrementation_nb_joueurs(int * msgid_client){
   int i = 0;
   int existe = 0;
   //on regarde si le joueur n'est pas déjà connecté
@@ -103,9 +105,11 @@ void incrementation_nb_joueurs(int * msgid_client){
     }
     if(placement==0){
       printf("[Serveur]: Plus de place pour un nouveau joueur %d\n\n\n",*msgid_client);
-      fish_ipc_send(*msgid_client,"Désolé, il n y a plus de place pour un nouveau joueur\n");
+      fish_ipc_send(*msgid_client,"ERREUR : Désolé, il n y a plus de place pour un nouveau joueur\n");
+      return ERREUR;
     }
   }
+  return 0;
 }
 
 void decrementation_nb_joueurs(int * msgid_client){
@@ -129,13 +133,17 @@ void decrementation_nb_joueurs(int * msgid_client){
       i++;
     }
     #ifdef DEBUG
+    int verif=0;
     for(i=0;i<MAX_JOUEURS;i++){
       if(tab_id_joueurs[i]==*msgid_client){
-        printf("[Serveur]: Le joueur %d ne s'est pas bien déconnecté\n\n\n",*msgid_client);
+        verif=ERREUR;
       }
-      else{
-        printf("[Serveur]: Le joueur %d s'est bien déconnecté\n\n\n",*msgid_client);
-      }
+    }
+    if(verif==ERREUR){
+      printf("[Serveur]: Le joueur %d ne s'est pas bien déconnecté\n\n\n",*msgid_client);
+    }
+    else{
+      printf("[Serveur]: Le joueur %d s'est bien déconnecté\n\n\n",*msgid_client);
     }
     #endif
   }
@@ -254,7 +262,7 @@ void launch_thread_game(int * msgid_client){
   printf("[Serveur]: Numéro de la partie lancée : %d\n",num_partie);
   #endif
 
-  if (num_partie!=-1){
+  if (num_partie!=ERREUR){
     client_partie.msgid_client=*msgid_client;
     client_partie.partie=num_partie;
 
@@ -267,7 +275,6 @@ void launch_thread_game(int * msgid_client){
     #ifdef DEBUG
     printf("[Serveur]: Les parties sont complètes\n\n\n");
     #endif
-    fish_ipc_send(*msgid_client,"[Serveur]: ERREUR : Les parties sont complètes\n");
   }
 }
 
@@ -277,13 +284,14 @@ void launch_nb_game_en_attente(int * msgid_client){
   #endif
 
   int i=0;
-  int cpt=0;
   char message[TAILLE_MSG];
   char id_partie_attente[MAX_PARTIES];
   sprintf(message,"%s"," Parties en attente d'un joueur ");
   for(i=0;i<MAX_PARTIES;i++){
     if(tab_parties[i]==PARTIE_EN_ATTENTE){
-      cpt++;
+      #ifdef DEBUG
+      printf("[Serveur]: Partie %d en attente d'un joueur\n",i);
+      #endif
       sprintf(id_partie_attente,"%d",i);
       strcat(message," : ");
       strcat(message,id_partie_attente);
@@ -378,19 +386,17 @@ int main(void){
     printf("[Serveur]: Le msgid_client=%d\n",msgid_client);
     #endif
 
+    //interprete le message
     if (!strcmp("create game",message)){
       printf("[Serveur]: Le client %d veut créer une partie\n",msgid_client);
-      incrementation_nb_joueurs(&msgid_client);
       choix_client=1;
     }
     else if (!strcmp("get open games",message)){
       printf("[Serveur]: Le client %d veut voir la liste des parties incomplètes\n",msgid_client);
-      incrementation_nb_joueurs(&msgid_client);
       choix_client=2;
     }
     else if (strncmp("join game ",message,10)==0){
       printf("[Serveur]: Le client %d veut rejoindre une partie\n",msgid_client);
-      incrementation_nb_joueurs(&msgid_client);
       choix_client=3;
     }
     else if (!strcmp("deconnection",message)){
@@ -400,7 +406,9 @@ int main(void){
 
     switch(choix_client) {
       case 1 :
-        launch_thread_game(&msgid_client);
+        if (incrementation_nb_joueurs(&msgid_client)!=ERREUR){
+          launch_thread_game(&msgid_client);
+        }
         break;
 
       case 2 :
@@ -408,7 +416,9 @@ int main(void){
         break;
 
       case 3 :
-        rejoindre_partie(message, &msgid_client);
+          if (incrementation_nb_joueurs(&msgid_client)!=ERREUR){
+            rejoindre_partie(message, &msgid_client);
+          }
        break;
 
        case 4 :

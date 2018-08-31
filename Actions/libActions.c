@@ -13,9 +13,10 @@
 #include "../Board/board.h"
 #include "../Communication/libFishIPC.h"
 
+//les fonctions commencant par "s_" sont à realiser par le Serveur
+//les fonctions commencant par "c_" sont à realiser par le Client
 
 /**************************************** SERVEUR *****************************************************/
-
 //Fonction qui permet de placer les 3 poissons du coté du joueur 1 ou 2
 //On suppose que le joueur 1 commence toujours et se place en haut du PLATEAU
 //Le joueur 2 placera donc ses poissons en bas du PLATEAU
@@ -35,11 +36,10 @@
 //   return ;
 // }
 
-void placement_poissons_init(int * numero_joueur, int * msgid_joueur, void * board_thread[BOARDS_SIZE][BOARDS_SIZE]){
+void c_placement_poissons_init(int * numero_joueur, int * msgid_joueur, void * board_thread[BOARDS_SIZE][BOARDS_SIZE]){
   int nb_placement=3;
   printf("Vous pouvez placer vos poissons en :");
   printf("Il vous en reste : %d :", nb_placement);
-
 }
 
 //Fonction qui gère le déplacement

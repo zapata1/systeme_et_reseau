@@ -137,8 +137,6 @@ void partie_en_cours(int * msgid_thread){
 
          case 11 :
           printf("[Client %d]: Vous voulez vous déplacer\n",msgid_client);   //le serveur doit nous renvoyer le plateau de jeu
-          // fish_ipc_read(msgid_client, message);
-          // printBoard((void *)message);
           break;
 
       default :

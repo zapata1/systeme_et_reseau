@@ -25,7 +25,6 @@ struct info_client_partie {
   int msgid_client;
   int partie;
 };
-struct info_client_partie client_partie;
 
 /*****************GESTION DES PARTIES***********************/
 int tab_parties[MAX_PARTIES];
@@ -152,33 +151,6 @@ void decrementation_nb_joueurs(int * msgid_client){
   }
 }
 
-//TODO faire la fonction
-
-// int attente_joueur_2(int * partie, int * msgid_client_1, int * msgid_thread, void * board_thread[BOARDS_SIZE][BOARDS_SIZE]){
-//   int msgid_client_2;
-//   char message[TAILLE_MSG];
-//   printf("------------\n");
-//   printf("Partie = %d",*partie);
-//   printf("msgid_client_1 = %d",*msgid_client_1);
-//   printf("msgid_thread = %d",*msgid_thread);
-//   printf("------------\n");
-//   while(tab_parties[*partie]!=PARTIE_COMPLETE){
-//     //On attend un nouveau message du client
-//     //Il peut venir des deux clients
-//     //On stocke donc l'id de sa fdm si c'est le client 2
-//     //Le client 1 peut demander le plateau du jeu en attendant qu'un autre joueur se connecte
-//     msgid_client_2=fish_ipc_read_from_client(*msgid_thread, message);
-//     if( (!strcmp(message,"get map")) && (msgid_client_2==*msgid_client_1) ){
-//       printf("++++++\n");
-//       // board_to_string(board_thread,message);
-//       fish_ipc_send(*msgid_client_1,(char *)message);
-//       printf("thread de la partie %d : plateau envoyé \n",*partie);
-//       bzero(message,TAILLE_MSG);
-//     }
-//   }
-//   return msgid_client_2;
-// }
-
 void * thread_game(void * arg) {
   void * board_thread[BOARDS_SIZE][BOARDS_SIZE];
   initBoard(board_thread);
@@ -218,8 +190,6 @@ void * thread_game(void * arg) {
   //Ici, le client 1 connait la file de message du thread et peut donc communiquer avec le thread
   //On va maintenant attendre que le deuxieme client se connecte
 
-  // msgid_client_2 = attente_joueur_2(&partie, &msgid_client_1, &msgid_thread, board_thread[BOARDS_SIZE][BOARDS_SIZE]);
-
   while(tab_parties[partie]!=PARTIE_COMPLETE){
     //On attend un nouveau message du client
     //Il peut venir des deux clients
@@ -249,6 +219,9 @@ void * thread_game(void * arg) {
 
   fish_ipc_send(msgid_client_1,"La partie peut commencer, tous les joueurs sont la\n"); //TODO recevoir ces messages
   fish_ipc_send(msgid_client_2,"La partie peut commencer, tous les joueurs sont la\n");
+  fish_ipc_send(msgid_client_1,"Vous êtes la depuis plus longtemps alors vous commencez\n");
+  fish_ipc_send(msgid_client_2,"C'est au tour du joueur 1 de commencer\n");
+
   pthread_exit(NULL);
 }
 
@@ -261,6 +234,8 @@ void launch_thread_game(int * msgid_client){
   #ifdef DEBUG
   printf("[Serveur]: Numéro de la partie lancée : %d\n",num_partie);
   #endif
+
+  struct info_client_partie client_partie;
 
   if (num_partie!=ERREUR){
     client_partie.msgid_client=*msgid_client;

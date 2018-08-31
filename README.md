@@ -9,6 +9,8 @@ ________________________________
 4. Répétez le point n°3 autant de fois que nécessaire pour pouvoir jouer une partie. Vous serez guidé par les instructions que vous pouvez réaliser.
 5. *(Partie en cours de réalisation)* Vous pourrez visualiser une partie en cours en ouvrant une page en localhost, en suivant le lien suivant : [Visualisation des parties](`http://localhost:8080/`)
 6. Pour quitter les différents terminaux, il suffit de faire la commande : `ctrl + c`. Il faut d'abord arrêter les processus des joueurs avant d'arrêter celui du serveur.
+7. Si l'arrêt ne s'est pas bien passé et que certaines files de messages ne sont pas correctement fermées, il vous sera impossible de relancer le serveur ou de créer un client. Il vous faudra avant, lancer la commande `ipcrm -a`.  
+Vous pouvez reprendre du point n°2.
 ________________________________
 
 ## Etape de Réalisation
@@ -17,7 +19,7 @@ ________________________________
 
 * Faire les Makefiles : ok
 
-### Etape 1
+### Etape 1 :
 
 * Tester `SIGINT.`: ok  
 * Tester `SIGSEGV.`: ok
@@ -41,14 +43,14 @@ ________________________________
 
 ### Etape 5
 
-* Créer une bibliothèque réseau pour créer un serveur web :
+* Créer une bibliothèque réseau pour créer un serveur web : *(le code n'est pas de moi)* non terminé
 * Elle devra permettre de :
   * choisir une partie en cours
   * visualiser le plateau correspondant avec MAJ automatique
 
 ### Etape 6
 
-* Coder le moteur du jeu
+* Coder le moteur du jeu : non terminé
 
 ________________________________
 
@@ -116,10 +118,15 @@ ________________________________
 1. Afficher les informations sur les parties en cours grâce à un serveur web
   * Je compte réaliser un serveur avec du javascript
   * Le serveur web enverra une requête (grâce aux sockets) au serveur, qui lui renverra les informations demandées
+    * Dans un soucis de compatibilité entre les sockets et websockets C et javascript, je voulais finalement utiliser un fichier contenant les informations de la partie. Et cela pour charque partie.
+      * Le fichier contiendra les informations du plateau de jeu : le board (qu'on pourra stocker sur la première ligne car invariable), et le tableau des poissons qui sera stocké sur une ligne du fichier (la dernière ligne étant la plus récente).
 2. Finir de coder le moteur du jeu
   * Je continue de développer le répertoire *Actions*
-3. Vérifier qu'en cas d'erreur, le programme puisse continuer à tout moment
-  * Rajouter des conditions suplémentaires et tester les cas limites
+  * Il faut encore définir la gestion des tours
+  * Les poissons des joueurs ne seront pas placé sur le board, mais dans un autre tableau
+    * Ainsi on garde les informations contenu sous les poissons
+    * Pour afficher le plateau, il suffira alors de comparer les deux tableaux et d'afficher les poisssons en priorité
+
 ________________________________
 ## Diffucultés rencontrées
 

@@ -79,27 +79,23 @@ void sendCase(uint8_t value,char * board){
 void board_to_string(void * board[BOARDS_SIZE][BOARDS_SIZE], char * board_str){
   uint8_t i;
   uint8_t j;
-
-
   char temp[50];
-
   strcat(board_str,"\n    ------------------\n");
   strcat(board_str,"    |A||B||C||D||E||F|\n");
   strcat(board_str,"----------------------\n");
 
   for(i=0; i<BOARD_SIZE; i++)
-    {
-
+  {
       sprintf(temp,"|%d| ",i);
       strcat(board_str,temp);
       for(j=0; j<BOARD_SIZE; j++)
-	{
-	  sendCase(((int8_t *)board[0][0])[3*i+j],board_str);
-	}
+				{
+				  sendCase(((int8_t *)board[0][0])[3*i+j],board_str);
+				}
       for(j=0; j<BOARD_SIZE; j++)
-	{
-	  sendCase(((int8_t *)board[0][1])[3*i+j],board_str);
-	}
+				{
+				  sendCase(((int8_t *)board[0][1])[3*i+j],board_str);
+				}
       strcat(board_str,"\n----------------------\n");
     }
 
@@ -109,17 +105,15 @@ void board_to_string(void * board[BOARDS_SIZE][BOARDS_SIZE], char * board_str){
       strcat(board_str,temp);
 
       for(j=0; j<BOARD_SIZE; j++)
-	{
-	  sendCase(((int8_t *)board[1][0])[3*i+j],board_str);
-	}
+				{
+				  sendCase(((int8_t *)board[1][0])[3*i+j],board_str);
+				}
       for(j=0; j<BOARD_SIZE; j++)
-	{
-	  sendCase(((int8_t *)board[1][1])[3*i+j],board_str);
-	}
-
+				{
+				  sendCase(((int8_t *)board[1][1])[3*i+j],board_str);
+				}
       strcat(board_str,"\n----------------------\n");
     }
-
 }
 
 void printBoard(void *board[BOARDS_SIZE][BOARDS_SIZE]){

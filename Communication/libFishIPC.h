@@ -1,4 +1,7 @@
 // Damien Narbais
+#ifndef __LIBFISHIPC_H__
+#define __LIBFISHIPC_H__
+
 
 #define CLE_MSG_CMD  (key_t)1000
 #define TAILLE_MSG  1024
@@ -38,5 +41,7 @@ int fish_ipc_send(int msgid,char * mess);
 int fish_ipc_read(int msgid ,char * (mess));
 
 //Retourne l'id de la file de message créé par l'envoyeur
-//Pour que le serveur réponde au client ou puisse connaitre sa file de message
+//Pour que le serveur réponde au client ou puisse connaitre la file de message du client
 int fish_ipc_read_from_client(int msgid ,char * (mess));
+
+#endif

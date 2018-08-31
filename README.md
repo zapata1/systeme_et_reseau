@@ -1,5 +1,6 @@
 # *systeme et réseau :*
 # Réalisation de la version informatique du jeu de plateau Little Big Fish
+## [GitHub](`https://github.com/zapata1/systeme_et_reseau`) (pour un README plus lisible)
 ________________________________
 ## Faire marcher le programme
 
@@ -7,7 +8,8 @@ ________________________________
 2. Ouvrez un terminal (terminal S). Allez dans le répertoire *Main* : lancer le serveur avec la commande :  `./serveur`
 3. Ouvrez un autre terminal (terminal J1). Allez dans le répertoire *Player* : lancer le client/joueur avec la commande `./client`
 4. Répétez le point n°3 autant de fois que nécessaire pour pouvoir jouer une partie. Vous serez guidé par les instructions que vous pouvez réaliser.
-5. *(Partie en cours de réalisation)* Vous pourrez visualiser une partie en cours en ouvrant une page en localhost, en suivant le lien suivant : [Visualisation des parties](`http://localhost:8080/`)
+5. *(Partie en cours de réalisation)* Vous pourrez visualiser une partie en cours en ouvrant une page en localhost, en suivant le lien suivant : [Visualisation des parties](`http://localhost:8080/`)  
+Pour le moment, le serveur n'est lancé que depuis *Reseau/Serveur*` ./serveur -p 8080`. Et n'affiche pas les infos des parties.
 6. Pour quitter les différents terminaux, il suffit de faire la commande : `ctrl + c`. Il faut d'abord arrêter les processus des joueurs avant d'arrêter celui du serveur.
 7. Si l'arrêt ne s'est pas bien passé et que certaines files de messages ne sont pas correctement fermées, il vous sera impossible de relancer le serveur ou de créer un client. Il vous faudra avant, lancer la commande `ipcrm -a`.  
 Vous pouvez reprendre du point n°2.
@@ -105,12 +107,12 @@ En parallèle, il lance le serveur web.
 
 ### Le rôle de chaque dossier
 
-**Actions** : Ce dossier comporte les fonctions nécessaires pour réaliser les étapes d'une partie (gestion des mouvements d'un joueur, prise en compte des éléments du plateau de jeu ...)   
+**Actions** : Ce dossier devrait comporter les fonctions nécessaires pour réaliser les étapes d'une partie (gestion des mouvements d'un joueur, prise en compte des éléments du plateau de jeu ...)   
 **Board** : Ce dossier contient tout ce qui permet de gérer le plateau de jeu. (création, affichage ...)  
 **Communication** : Celui-ci permet de manipuler les files de messages (les créer, les supprimer, envoyer un message, le recevoir ...)  
 **Main** : C'est le serveur qui lance les parties, le serveur web et répond aux demandes des clients   
 **Player** : C'est le joueur. Il permet d'envoyer et recevoir les informations nécessaire pour jouer une partie.  
-**Reseau** (a venir) : permettra de lancer le serveur web pour l'affichage des parties
+**Reseau** : doit permettre de lancer le serveur web pour l'affichage des parties. Pour l'instant le serveur web se lance depuis *Reseau/Serveur* et non depuis le main
 
 ________________________________
 ## Travail restant
@@ -120,6 +122,7 @@ ________________________________
   * Le serveur web enverra une requête (grâce aux sockets) au serveur, qui lui renverra les informations demandées
     * Dans un soucis de compatibilité entre les sockets et websockets C et javascript, je voulais finalement utiliser un fichier contenant les informations de la partie. Et cela pour charque partie.
       * Le fichier contiendra les informations du plateau de jeu : le board (qu'on pourra stocker sur la première ligne car invariable), et le tableau des poissons qui sera stocké sur une ligne du fichier (la dernière ligne étant la plus récente).
+  * Pour l'instant, le serveur ne se lance pas depuis la main mais depuis *Reseau/Serveur*
 2. Finir de coder le moteur du jeu
   * Je continue de développer le répertoire *Actions*
   * Il faut encore définir la gestion des tours

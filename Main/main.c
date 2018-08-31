@@ -13,7 +13,7 @@
 #include "../Actions/libActions.h"
 
 #define MAX_JOUEURS 10
-#define MAX_PARTIES 1
+#define MAX_PARTIES 5
 
 #define PARTIE_EN_ATTENTE 1
 #define PARTIE_COMPLETE 2
@@ -25,6 +25,7 @@ struct info_client_partie {
   int msgid_client;
   int partie;
 };
+struct info_client_partie client_partie;
 
 /*****************GESTION DES PARTIES***********************/
 int tab_parties[MAX_PARTIES];
@@ -234,8 +235,6 @@ void launch_thread_game(int * msgid_client){
   #ifdef DEBUG
   printf("[Serveur]: Numéro de la partie lancée : %d\n",num_partie);
   #endif
-
-  struct info_client_partie client_partie;
 
   if (num_partie!=ERREUR){
     client_partie.msgid_client=*msgid_client;
